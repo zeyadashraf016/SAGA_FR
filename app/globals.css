@@ -10,6 +10,17 @@
 * {
   box-sizing: border-box;
 }
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 html {
   scroll-behavior: smooth;
 }
@@ -997,58 +1008,50 @@ body {
 .coordinate-globe-canvas.is-dragging {
   cursor: grabbing;
 }
-.globe-marker-label {
-  --label-x: -50%;
-  --label-y: calc(-100% - 10px);
+.globe-marker-target {
   position: absolute;
-  translate: var(--label-x) var(--label-y);
+  width: 30px;
+  height: 30px;
+  translate: -50% -50%;
   z-index: 4;
-  padding: 5px 7px;
-  border: 1px solid #8cece040;
-  background: #06192adb;
-  backdrop-filter: blur(8px);
-  color: #d8fffa;
-  font-size: 7px;
+  padding: 0;
+  border: 1px solid transparent;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+.globe-marker-target:hover,
+.globe-marker-target:focus-visible,
+.globe-marker-target.is-active {
+  border-color: #b9fff77a;
+  box-shadow: 0 0 18px #17b8af50;
+  outline: none;
+}
+.globe-market-panel {
+  position: absolute;
+  left: 1%;
+  bottom: 7%;
+  z-index: 5;
+  min-width: 158px;
+  display: grid;
+  gap: 5px;
+  padding: 13px 15px;
+  border-left: 2px solid var(--mint);
+  background: #06192ad9;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 35px #02101d5c;
+}
+.globe-market-panel small,
+.globe-market-panel span {
+  color: #7fa9af;
+  font-size: 6px;
+  letter-spacing: 0.14em;
   text-transform: uppercase;
-  letter-spacing: 0.13em;
-  pointer-events: none;
-  white-space: nowrap;
-  opacity: 0;
-  transition:
-    opacity 0.2s,
-    visibility 0.2s;
 }
-.globe-marker-label[data-market-marker="spain"] {
-  --label-x: -112%;
-  --label-y: -150%;
-}
-.globe-marker-label[data-market-marker="turkey"] {
-  --label-x: -108%;
-  --label-y: -165%;
-}
-.globe-marker-label[data-market-marker="saudi"] {
-  --label-x: -108%;
-  --label-y: 55%;
-}
-.globe-marker-label[data-market-marker="qatar"] {
-  --label-x: 12%;
-  --label-y: -175%;
-}
-.globe-marker-label[data-market-marker="uae"] {
-  --label-x: 18%;
-  --label-y: 55%;
-}
-.globe-marker-label[data-market-marker="china"],
-.globe-marker-label[data-market-marker="malaysia"] {
-  --label-y: -145%;
-}
-.globe-marker-label.is-home {
-  --label-y: -145%;
+.globe-market-panel strong {
   color: #fff;
-  border-color: #fff8;
-  background: #0a3a4ee8;
-  font-weight: 800;
-  box-shadow: 0 0 18px #17b8af4d;
+  font-size: 13px;
+  letter-spacing: 0.04em;
 }
 .globe-instruction {
   position: absolute;
@@ -1076,10 +1079,18 @@ body {
   letter-spacing: 0.12em;
   text-transform: uppercase;
 }
-.market-coordinate-list span {
+.market-coordinate-list button {
   display: flex;
   align-items: center;
   gap: 5px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  cursor: pointer;
 }
 .market-coordinate-list i {
   width: 4px;
@@ -1088,7 +1099,8 @@ body {
   background: var(--mint);
   box-shadow: 0 0 7px #5ff5e5;
 }
-.market-coordinate-list .is-home {
+.market-coordinate-list .is-home,
+.market-coordinate-list .is-active {
   color: #fff;
 }
 .market-coordinate-list .is-home i {
@@ -1360,9 +1372,11 @@ body {
   .coordinate-globe {
     width: min(100%, 430px);
   }
-  .globe-marker-label {
-    font-size: 6px;
-    padding: 4px 5px;
+  .globe-market-panel {
+    left: 0;
+    bottom: 4%;
+    min-width: 135px;
+    padding: 10px 12px;
   }
   .market-coordinate-list {
     right: 0;

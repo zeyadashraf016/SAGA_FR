@@ -1,7 +1,7 @@
 "use client";
 
 import createGlobe from "cobe";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 
 const CAIRO: [number, number] = [30.0444, 31.2357];
 
@@ -44,6 +44,9 @@ const markets = [
 export default function NetworkGlobe() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const [activeMarketId, setActiveMarketId] = useState("egypt");
+  const activeMarket =
+    markets.find((market) => market.id === activeMarketId) ?? markets[0];
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -60,21 +63,21 @@ export default function NetworkGlobe() {
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const labels = new Map(
+    const hitTargets = new Map(
       Array.from(
-        container.querySelectorAll<HTMLElement>("[data-market-marker]"),
-      ).map((label) => [label.dataset.marketMarker, label]),
+        container.querySelectorAll<HTMLElement>("[data-market-target]"),
+      ).map((target) => [target.dataset.marketTarget, target]),
     );
 
-    const positionLabels = () => {
+    const positionHitTargets = () => {
       const cosTheta = Math.cos(0.18);
       const sinTheta = Math.sin(0.18);
       const cosPhi = Math.cos(phi);
       const sinPhi = Math.sin(phi);
 
       markets.forEach((market) => {
-        const label = labels.get(market.id);
-        if (!label) return;
+        const target = hitTargets.get(market.id);
+        if (!target) return;
 
         const latitude = (market.location[0] * Math.PI) / 180;
         const longitude = (market.location[1] * Math.PI) / 180 - Math.PI;
@@ -88,10 +91,10 @@ export default function NetworkGlobe() {
         const depth =
           -sinPhi * cosTheta * x + sinTheta * y + cosPhi * cosTheta * z;
 
-        label.style.left = `${(projectedX * 0.825 + 1) * 50}%`;
-        label.style.top = `${(-projectedY * 0.825 + 1) * 50}%`;
-        label.style.opacity = depth >= 0 ? "1" : "0";
-        label.style.visibility = depth >= 0 ? "visible" : "hidden";
+        target.style.left = `${(projectedX * 0.825 + 1) * 50}%`;
+        target.style.top = `${(-projectedY * 0.825 + 1) * 50}%`;
+        target.style.visibility = depth >= 0 ? "visible" : "hidden";
+        target.style.pointerEvents = depth >= 0 ? "auto" : "none";
       });
     };
 
@@ -134,7 +137,7 @@ export default function NetworkGlobe() {
         width,
         height: width,
       });
-      positionLabels();
+      positionHitTargets();
       frame = window.requestAnimationFrame(render);
     };
     frame = window.requestAnimationFrame(render);
@@ -167,8 +170,8 @@ export default function NetworkGlobe() {
     canvas.addEventListener("pointermove", drag);
     canvas.addEventListener("pointerup", stopDrag);
     canvas.addEventListener("pointercancel", stopDrag);
-    canvas.addEventListener("pointerenter", pause);
-    canvas.addEventListener("pointerleave", resume);
+    container.addEventListener("pointerenter", pause);
+    container.addEventListener("pointerleave", resume);
 
     const observer = new ResizeObserver(() => {
       width = container.clientWidth;
@@ -181,8 +184,8 @@ export default function NetworkGlobe() {
       canvas.removeEventListener("pointermove", drag);
       canvas.removeEventListener("pointerup", stopDrag);
       canvas.removeEventListener("pointercancel", stopDrag);
-      canvas.removeEventListener("pointerenter", pause);
-      canvas.removeEventListener("pointerleave", resume);
+      container.removeEventListener("pointerenter", pause);
+      container.removeEventListener("pointerleave", resume);
       observer.disconnect();
       globe.destroy();
     };
@@ -196,22 +199,48 @@ export default function NetworkGlobe() {
         aria-label="Rotating globe with accurately geolocated SAGA markets"
       />
       {markets.map((market) => (
-        <span
-          className={`globe-marker-label${market.home ? " is-home" : ""}`}
+        <button
+          className={`globe-marker-target${activeMarketId === market.id ? " is-active" : ""}`}
           key={market.id}
-          data-market-marker={market.id}
+          data-market-target={market.id}
+          type="button"
+          aria-label={`Show ${market.name}`}
+          onPointerEnter={() => setActiveMarketId(market.id)}
+          onFocus={() => setActiveMarketId(market.id)}
+          onClick={() => setActiveMarketId(market.id)}
         >
-          {market.home ? "Cairo · Egypt" : market.name}
-        </span>
+          <span className="sr-only">{market.name}</span>
+        </button>
       ))}
+      <div className="globe-market-panel" aria-live="polite">
+        <small>
+          {activeMarket.home ? "SAGA home base" : "Connected market"}
+        </small>
+        <strong>
+          {activeMarket.home ? "Cairo, Egypt" : activeMarket.name}
+        </strong>
+        <span>
+          {Math.abs(activeMarket.location[0]).toFixed(2)}°
+          {activeMarket.location[0] >= 0 ? "N" : "S"} ·{" "}
+          {Math.abs(activeMarket.location[1]).toFixed(2)}°
+          {activeMarket.location[1] >= 0 ? "E" : "W"}
+        </span>
+      </div>
       <span className="globe-instruction">
-        Drag to explore · hover to pause
+        Drag to explore · hover or tap a pin
       </span>
       <div className="market-coordinate-list">
         {markets.map((market) => (
-          <span className={market.home ? "is-home" : ""} key={market.name}>
+          <button
+            className={`${market.home ? "is-home" : ""}${activeMarketId === market.id ? " is-active" : ""}`}
+            key={market.name}
+            type="button"
+            onPointerEnter={() => setActiveMarketId(market.id)}
+            onFocus={() => setActiveMarketId(market.id)}
+            onClick={() => setActiveMarketId(market.id)}
+          >
             <i /> {market.name}
-          </span>
+          </button>
         ))}
       </div>
     </div>
