@@ -998,8 +998,10 @@ body {
   cursor: grabbing;
 }
 .globe-marker-label {
+  --label-x: -50%;
+  --label-y: calc(-100% - 10px);
   position: absolute;
-  translate: -50% calc(-100% - 8px);
+  translate: var(--label-x) var(--label-y);
   z-index: 4;
   padding: 5px 7px;
   border: 1px solid #8cece040;
@@ -1016,7 +1018,32 @@ body {
     opacity 0.2s,
     visibility 0.2s;
 }
+.globe-marker-label[data-market-marker="spain"] {
+  --label-x: -112%;
+  --label-y: -150%;
+}
+.globe-marker-label[data-market-marker="turkey"] {
+  --label-x: -108%;
+  --label-y: -165%;
+}
+.globe-marker-label[data-market-marker="saudi"] {
+  --label-x: -108%;
+  --label-y: 55%;
+}
+.globe-marker-label[data-market-marker="qatar"] {
+  --label-x: 12%;
+  --label-y: -175%;
+}
+.globe-marker-label[data-market-marker="uae"] {
+  --label-x: 18%;
+  --label-y: 55%;
+}
+.globe-marker-label[data-market-marker="china"],
+.globe-marker-label[data-market-marker="malaysia"] {
+  --label-y: -145%;
+}
 .globe-marker-label.is-home {
+  --label-y: -145%;
   color: #fff;
   border-color: #fff8;
   background: #0a3a4ee8;
