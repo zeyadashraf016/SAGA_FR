@@ -35,7 +35,7 @@ export default function Home() {
           <a href="#network">Network</a>
         </nav>
         <a className="top-cta" href="#quote">
-          Start a request <b>↗</b>
+          Start a request
         </a>
       </header>
 
@@ -58,10 +58,10 @@ export default function Home() {
           </p>
           <div className="hero-actions">
             <a className="button" href="#quote">
-              Start a request <b>→</b>
+              Start a request
             </a>
             <a className="under-link" href="#services">
-              Explore SAGA <span>↓</span>
+              Explore SAGA
             </a>
           </div>
         </div>
@@ -227,9 +227,7 @@ export default function Home() {
               <div className="product-copy">
                 <small>{category}</small>
                 <h3>{name}</h3>
-                <a href="#quote">
-                  Request this item <span>↗</span>
-                </a>
+                <a href="#quote">Request this item</a>
               </div>
             </article>
           ))}
@@ -338,7 +336,7 @@ export default function Home() {
             />
           </label>
           <button className="button" type="button">
-            Send request <b>→</b>
+            Send request
           </button>
           <small>Wireframe only — form submission is not connected yet.</small>
         </form>
@@ -354,7 +352,7 @@ export default function Home() {
           <a href="mailto:sagafreight@gmail.com">
             <small>Email</small>
             <strong>sagafreight@gmail.com</strong>
-            <span>Write to SAGA ↗</span>
+            <span>Write to SAGA</span>
           </a>
           <div>
             <small>WhatsApp</small>

@@ -6,15 +6,39 @@ import { useEffect, useRef } from "react";
 const CAIRO: [number, number] = [30.0444, 31.2357];
 
 const markets = [
-  { name: "Egypt", location: CAIRO, home: true },
-  { name: "USA", location: [37.0902, -95.7129] as [number, number] },
-  { name: "Spain", location: [40.4637, -3.7492] as [number, number] },
-  { name: "Turkey", location: [38.9637, 35.2433] as [number, number] },
-  { name: "Saudi Arabia", location: [23.8859, 45.0792] as [number, number] },
-  { name: "Qatar", location: [25.3548, 51.1839] as [number, number] },
-  { name: "UAE", location: [23.4241, 53.8478] as [number, number] },
-  { name: "China", location: [35.8617, 104.1954] as [number, number] },
-  { name: "Malaysia", location: [4.2105, 101.9758] as [number, number] },
+  { id: "egypt", name: "Egypt", location: CAIRO, home: true },
+  { id: "usa", name: "USA", location: [37.0902, -95.7129] as [number, number] },
+  {
+    id: "spain",
+    name: "Spain",
+    location: [40.4637, -3.7492] as [number, number],
+  },
+  {
+    id: "turkey",
+    name: "Turkey",
+    location: [38.9637, 35.2433] as [number, number],
+  },
+  {
+    id: "saudi",
+    name: "Saudi Arabia",
+    location: [23.8859, 45.0792] as [number, number],
+  },
+  {
+    id: "qatar",
+    name: "Qatar",
+    location: [25.3548, 51.1839] as [number, number],
+  },
+  { id: "uae", name: "UAE", location: [23.4241, 53.8478] as [number, number] },
+  {
+    id: "china",
+    name: "China",
+    location: [35.8617, 104.1954] as [number, number],
+  },
+  {
+    id: "malaysia",
+    name: "Malaysia",
+    location: [4.2105, 101.9758] as [number, number],
+  },
 ];
 
 export default function NetworkGlobe() {
@@ -29,15 +53,52 @@ export default function NetworkGlobe() {
     let phi = -2.12;
     let width = container.clientWidth;
     let frame = 0;
+    let hovering = false;
+    let pointerStart: number | null = null;
+    let pointerPhi = phi;
     const devicePixelRatio = Math.min(window.devicePixelRatio, 2);
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
+    const labels = new Map(
+      Array.from(
+        container.querySelectorAll<HTMLElement>("[data-market-marker]"),
+      ).map((label) => [label.dataset.marketMarker, label]),
+    );
+
+    const positionLabels = () => {
+      const cosTheta = Math.cos(0.18);
+      const sinTheta = Math.sin(0.18);
+      const cosPhi = Math.cos(phi);
+      const sinPhi = Math.sin(phi);
+
+      markets.forEach((market) => {
+        const label = labels.get(market.id);
+        if (!label) return;
+
+        const latitude = (market.location[0] * Math.PI) / 180;
+        const longitude = (market.location[1] * Math.PI) / 180 - Math.PI;
+        const cosLatitude = Math.cos(latitude);
+        const x = -cosLatitude * Math.cos(longitude);
+        const y = Math.sin(latitude);
+        const z = cosLatitude * Math.sin(longitude);
+        const projectedX = cosPhi * x + sinPhi * z;
+        const projectedY =
+          sinPhi * sinTheta * x + cosTheta * y - cosPhi * sinTheta * z;
+        const depth =
+          -sinPhi * cosTheta * x + sinTheta * y + cosPhi * cosTheta * z;
+
+        label.style.left = `${(projectedX * 0.825 + 1) * 50}%`;
+        label.style.top = `${(-projectedY * 0.825 + 1) * 50}%`;
+        label.style.opacity = depth >= 0 ? "1" : "0";
+        label.style.visibility = depth >= 0 ? "visible" : "hidden";
+      });
+    };
 
     const globe = createGlobe(canvas, {
       devicePixelRatio,
-      width: width * devicePixelRatio,
-      height: width * devicePixelRatio,
+      width,
+      height: width,
       phi,
       theta: 0.18,
       dark: 1,
@@ -53,6 +114,7 @@ export default function NetworkGlobe() {
       arcHeight: 0.22,
       markerElevation: 0.025,
       markers: markets.map((market) => ({
+        id: market.id,
         location: market.location,
         size: market.home ? 0.095 : 0.055,
         color: market.home
@@ -66,15 +128,47 @@ export default function NetworkGlobe() {
     });
 
     const render = () => {
-      if (!reduceMotion) phi += 0.0017;
+      if (!reduceMotion && !hovering && pointerStart === null) phi += 0.0017;
       globe.update({
         phi,
-        width: width * devicePixelRatio,
-        height: width * devicePixelRatio,
+        width,
+        height: width,
       });
+      positionLabels();
       frame = window.requestAnimationFrame(render);
     };
     frame = window.requestAnimationFrame(render);
+
+    const startDrag = (event: PointerEvent) => {
+      pointerStart = event.clientX;
+      pointerPhi = phi;
+      canvas.setPointerCapture(event.pointerId);
+      canvas.classList.add("is-dragging");
+    };
+    const drag = (event: PointerEvent) => {
+      if (pointerStart === null) return;
+      phi = pointerPhi + (event.clientX - pointerStart) / 180;
+    };
+    const stopDrag = (event: PointerEvent) => {
+      pointerStart = null;
+      if (canvas.hasPointerCapture(event.pointerId)) {
+        canvas.releasePointerCapture(event.pointerId);
+      }
+      canvas.classList.remove("is-dragging");
+    };
+    const pause = () => {
+      hovering = true;
+    };
+    const resume = () => {
+      hovering = false;
+    };
+
+    canvas.addEventListener("pointerdown", startDrag);
+    canvas.addEventListener("pointermove", drag);
+    canvas.addEventListener("pointerup", stopDrag);
+    canvas.addEventListener("pointercancel", stopDrag);
+    canvas.addEventListener("pointerenter", pause);
+    canvas.addEventListener("pointerleave", resume);
 
     const observer = new ResizeObserver(() => {
       width = container.clientWidth;
@@ -83,6 +177,12 @@ export default function NetworkGlobe() {
 
     return () => {
       window.cancelAnimationFrame(frame);
+      canvas.removeEventListener("pointerdown", startDrag);
+      canvas.removeEventListener("pointermove", drag);
+      canvas.removeEventListener("pointerup", stopDrag);
+      canvas.removeEventListener("pointercancel", stopDrag);
+      canvas.removeEventListener("pointerenter", pause);
+      canvas.removeEventListener("pointerleave", resume);
       observer.disconnect();
       globe.destroy();
     };
@@ -95,10 +195,18 @@ export default function NetworkGlobe() {
         className="coordinate-globe-canvas"
         aria-label="Rotating globe with accurately geolocated SAGA markets"
       />
-      <div className="coordinate-globe-home" aria-hidden="true">
-        <span>Cairo</span>
-        <small>30.0444° N · 31.2357° E</small>
-      </div>
+      {markets.map((market) => (
+        <span
+          className={`globe-marker-label${market.home ? " is-home" : ""}`}
+          key={market.id}
+          data-market-marker={market.id}
+        >
+          {market.home ? "Cairo · Egypt" : market.name}
+        </span>
+      ))}
+      <span className="globe-instruction">
+        Drag to explore · hover to pause
+      </span>
       <div className="market-coordinate-list">
         {markets.map((market) => (
           <span className={market.home ? "is-home" : ""} key={market.name}>
