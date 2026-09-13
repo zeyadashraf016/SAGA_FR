@@ -1,3 +1,5 @@
+import NetworkGlobe from "./NetworkGlobe";
+
 const clients = [
   ["un", "United Nations"],
   ["bue", "The British University in Egypt"],
@@ -5,6 +7,15 @@ const clients = [
   ["elsewedy", "Elsewedy Electric"],
   ["grocer", "The Grocer"],
   ["domty", "Domty"],
+];
+
+const products = [
+  ["isolation-gowns", "PPE & protective wear", "Disposable isolation gowns"],
+  ["latex-gloves", "Hand protection", "Latex examination gloves"],
+  ["face-masks", "Medical & hygiene", "Disposable face masks"],
+  ["shoe-covers", "PPE & protective wear", "Disposable shoe covers"],
+  ["hair-nets", "Food safety & hygiene", "Disposable hair nets"],
+  ["nitrile-gloves", "Hand protection", "Blue nitrile gloves"],
 ];
 
 export default function Home() {
@@ -191,12 +202,46 @@ export default function Home() {
         </div>
       </section>
 
+      <section className="products section" id="products">
+        <div className="products-head">
+          <div>
+            <p className="kicker">04 / SUPPLIES & SOURCING</p>
+            <h2>
+              Selected essentials.
+              <br />
+              <em>Sourced for business.</em>
+            </h2>
+          </div>
+          <p>
+            A selected view of SAGA&apos;s PPE and hygiene range. We quote to
+            your required specification, volume and delivery destination—there
+            is no online cart or public pricing.
+          </p>
+        </div>
+        <div className="product-grid">
+          {products.map(([image, category, name]) => (
+            <article className="product-card" key={image}>
+              <div className="product-image">
+                <img src={`/products/${image}.jpg`} alt={name} />
+              </div>
+              <div className="product-copy">
+                <small>{category}</small>
+                <h3>{name}</h3>
+                <a href="#quote">
+                  Request this item <span>↗</span>
+                </a>
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
       <section
         className="clients"
         aria-label="Selected previous business clients"
       >
         <div className="clients-head">
-          <p className="kicker">04 / SELECTED CLIENTS</p>
+          <p className="kicker">05 / SELECTED CLIENTS</p>
           <p>
             Relationships built across healthcare, industry, education and
             retail.
@@ -219,7 +264,7 @@ export default function Home() {
 
       <section className="network" id="network">
         <div className="network-copy">
-          <p className="kicker">05 / GLOBAL NETWORK</p>
+          <p className="kicker">06 / GLOBAL NETWORK</p>
           <h2>
             Egypt at the centre.
             <br />
@@ -238,51 +283,12 @@ export default function Home() {
             </span>
           </div>
         </div>
-        <div
-          className="globe-stage"
-          aria-label="Animated SAGA network globe centred on Egypt"
-        >
-          <div className="orbit orbit-one" />
-          <div className="orbit orbit-two" />
-          <div className="globe">
-            <img
-              src="/saga_globe_premium.png"
-              alt="Glowing Earth showing Egypt, Europe, the Middle East and Asia"
-            />
-            <div className="globe-glow" />
-            <svg
-              className="globe-routes"
-              viewBox="0 0 520 520"
-              aria-hidden="true"
-            >
-              <path d="M238 272 Q144 210 85 252" />
-              <path d="M238 272 Q188 178 192 164" />
-              <path d="M238 272 Q265 178 290 146" />
-              <path d="M238 272 Q319 218 352 234" />
-              <path d="M238 272 Q347 260 370 276" />
-              <path d="M238 272 Q371 309 400 348" />
-              <path d="M238 272 Q380 202 430 185" />
-            </svg>
-            <i className="globe-pin pin-usa" data-name="USA" />
-            <i className="globe-pin pin-spain" data-name="Spain" />
-            <i className="globe-pin pin-turkey" data-name="Turkey" />
-            <i className="globe-pin pin-egypt homepin" data-name="Egypt" />
-            <i className="globe-pin pin-saudi" data-name="Saudi Arabia" />
-            <i className="globe-pin pin-qatar" data-name="Qatar" />
-            <i className="globe-pin pin-uae" data-name="UAE" />
-            <i className="globe-pin pin-china" data-name="China" />
-            <i className="globe-pin pin-malaysia" data-name="Malaysia" />
-          </div>
-          <p className="globe-caption">
-            <span>CAIRO</span>
-            <i /> <span>CONNECTED MARKETS</span>
-          </p>
-        </div>
+        <NetworkGlobe />
       </section>
 
       <section className="quote section" id="quote">
         <div>
-          <p className="kicker">06 / START A REQUEST</p>
+          <p className="kicker">07 / START A REQUEST</p>
           <h2>
             Tell us what needs to <em>move.</em>
           </h2>
@@ -339,7 +345,7 @@ export default function Home() {
       </section>
       <section className="contact-info" id="contact">
         <div className="contact-intro">
-          <p className="kicker">07 / CONTACT SAGA</p>
+          <p className="kicker">08 / CONTACT SAGA</p>
           <h2>
             Let&apos;s start <em>moving.</em>
           </h2>
