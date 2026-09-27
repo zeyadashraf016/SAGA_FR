@@ -222,7 +222,7 @@ export default function Home() {
           {products.map(([image, category, name]) => (
             <article className="product-card" key={image}>
               <div className="product-image">
-                <img src={`/products/${image}.jpg`} alt={name} />
+                <img src={`/products/${image}.png`} alt={name} />
               </div>
               <div className="product-copy">
                 <small>{category}</small>

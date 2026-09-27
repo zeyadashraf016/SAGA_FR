@@ -1461,45 +1461,19 @@ body {
 }
 .product-image {
   aspect-ratio: 1.18;
-  position: relative;
-  isolation: isolate;
-  background:
-    radial-gradient(circle at 76% 18%, #55f0df2c, transparent 32%),
-    linear-gradient(135deg, #082337 0%, #0b3a4d 54%, #061927 100%);
+  background: radial-gradient(ellipse at 50% 46%, #0d3749, #08283c 62%, #061b2b);
   overflow: hidden;
-}
-.product-image:before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  background:
-    linear-gradient(#8df6ec13 1px, transparent 1px),
-    linear-gradient(90deg, #8df6ec10 1px, transparent 1px);
-  background-size: 32px 32px;
-  opacity: 0.58;
-}
-.product-image:after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(180deg, transparent 62%, #06192760);
-  box-shadow: inset 0 0 0 1px #9dfcf01f;
 }
 .product-image img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  opacity: 0.95;
-  mix-blend-mode: multiply;
-  filter: saturate(1.08) contrast(1.08) brightness(1.08);
+  padding: 14px;
+  object-fit: contain;
   transition: transform 0.55s ease;
 }
 .product-card:hover .product-image img {
-  transform: scale(1.045);
+  transform: scale(1.035);
 }
 .product-copy {
   padding: 22px 22px 24px;
