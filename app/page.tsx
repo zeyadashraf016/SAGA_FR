@@ -361,7 +361,7 @@ export default function Home() {
           </div>
           <div>
             <small>Call us</small>
-            <strong>01113702502 · 01116633999 · 01121315974</strong>
+            <strong>01113702502 · 01116633999 · 01121315974 · 01551229500</strong>
             <span>Freight, customs and supplies</span>
           </div>
         </div>
