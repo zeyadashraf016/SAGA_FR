@@ -356,12 +356,12 @@ export default function Home() {
           </a>
           <div>
             <small>WhatsApp</small>
-            <strong>0111663399 · 01113702502</strong>
+            <strong>01116633999 · 01113702502 · 01551229500</strong>
             <span>Available for quick coordination</span>
           </div>
           <div>
             <small>Call us</small>
-            <strong>01113702502 · 01116633999 · 01121315974 · 01551229500</strong>
+            <strong>01113702502 · 01116633999 · 01551229500</strong>
             <span>Freight, customs and supplies</span>
           </div>
         </div>
